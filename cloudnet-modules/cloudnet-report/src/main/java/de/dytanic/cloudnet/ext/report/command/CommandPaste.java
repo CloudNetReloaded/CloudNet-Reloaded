@@ -24,8 +24,10 @@ import de.dytanic.cloudnet.command.sub.SubCommand;
 import de.dytanic.cloudnet.command.sub.SubCommandBuilder;
 import de.dytanic.cloudnet.command.sub.SubCommandHandler;
 import de.dytanic.cloudnet.common.language.LanguageManager;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.report.CloudNetReportModule;
+import java.util.stream.Collectors;
 
 public final class CommandPaste extends SubCommandHandler {
 
@@ -57,7 +59,10 @@ public final class CommandPaste extends SubCommandHandler {
           dynamicString(
             "name",
             LanguageManager.getMessage("module-report-command-paste-service-not-found"),
-            input -> CloudNet.getInstance().getCloudServiceProvider().getCloudServiceByName(input) != null
+            input -> CloudNet.getInstance().getCloudServiceProvider().getCloudServiceByName(input) != null,
+            () -> CloudNetDriver.getInstance().getCloudServiceProvider().getCloudServices().stream()
+              .map(ServiceInfoSnapshot::getName)
+              .collect(Collectors.toList())
           )
         )
         .generateCommand(
