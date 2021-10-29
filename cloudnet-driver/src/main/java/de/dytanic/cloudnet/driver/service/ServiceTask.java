@@ -34,6 +34,8 @@ public class ServiceTask extends ServiceConfigurationBase implements INameable, 
   private String runtime;
   private String javaCommand;
 
+  private String address;
+
   private boolean disableIpRewrite;
   private boolean maintenance;
   private boolean autoDeleteOnStop;
@@ -147,6 +149,14 @@ public class ServiceTask extends ServiceConfigurationBase implements INameable, 
 
   public boolean canStartServices() {
     return !this.maintenance && System.currentTimeMillis() > this.serviceStartAbilityTime;
+  }
+
+  public String getAddress() {
+    return this.address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 
   public boolean isDisableIpRewrite() {

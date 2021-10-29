@@ -17,9 +17,11 @@
 package de.dytanic.cloudnet.driver.service;
 
 import de.dytanic.cloudnet.common.INameable;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.driver.serialization.ProtocolBuffer;
 import de.dytanic.cloudnet.driver.serialization.SerializableObject;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -94,6 +96,12 @@ public final class ServiceId implements INameable, SerializableObject {
 
   public ServiceEnvironmentType getEnvironment() {
     return this.environment;
+  }
+
+  @NotNull
+  public Optional<ServiceTask> getTask() {
+    return Optional.ofNullable(
+      CloudNetDriver.getInstance().getServiceTaskProvider().getServiceTask(this.getTaskName()));
   }
 
   @Override

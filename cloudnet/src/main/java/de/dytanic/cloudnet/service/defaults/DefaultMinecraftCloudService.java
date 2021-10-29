@@ -53,24 +53,26 @@ public abstract class DefaultMinecraftCloudService extends DefaultTemplateCloudS
   }
 
   private void rewriteBungeeConfig(Path config) throws IOException {
+    String address = CloudNet.getInstance()
+      .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
     this.rewriteServiceConfigurationFile(config, line -> {
       if (line.startsWith("    host: ")) {
-        line = "    host: " + CloudNet.getInstance().getConfig().getHostAddress() + ":" + this.getServiceConfiguration()
-          .getPort();
+        line = "    host: " + address + ":" + this.getServiceConfiguration().getPort();
       } else if (line.startsWith("  host: ")) {
-        line = "  host: " + CloudNet.getInstance().getConfig().getHostAddress() + ":" + this.getServiceConfiguration()
-          .getPort();
+        line = "  host: " + address + ":" + this.getServiceConfiguration().getPort();
       }
       return line;
     });
   }
 
   private void rewriteVelocityConfig(Path config) throws IOException {
+    String address = CloudNet.getInstance()
+      .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
+
     AtomicBoolean reference = new AtomicBoolean(true);
     this.rewriteServiceConfigurationFile(config, line -> {
       if (line.startsWith("bind =") && reference.getAndSet(false)) {
-        return "bind = \"" + CloudNet.getInstance().getConfig().getHostAddress() + ":" + this.getServiceConfiguration()
-          .getPort() + "\"";
+        return "bind = \"" + address + ":" + this.getServiceConfiguration().getPort() + "\"";
       }
       return line;
     });
@@ -118,7 +120,10 @@ public abstract class DefaultMinecraftCloudService extends DefaultTemplateCloudS
         properties.setProperty("server-name", this.getServiceId().getName());
         if (rewriteIp) {
           properties.setProperty("server-port", String.valueOf(this.getServiceConfiguration().getPort()));
-          properties.setProperty("server-ip", CloudNet.getInstance().getConfig().getHostAddress());
+
+          String address = CloudNet.getInstance()
+            .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
+          properties.setProperty("server-ip", address);
         }
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
@@ -145,7 +150,10 @@ public abstract class DefaultMinecraftCloudService extends DefaultTemplateCloudS
           }
 
           properties.setProperty("server-port", String.valueOf(this.getServiceConfiguration().getPort()));
-          properties.setProperty("server-ip", CloudNet.getInstance().getConfig().getHostAddress());
+
+          String address = CloudNet.getInstance()
+            .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
+          properties.setProperty("server-ip", address);
 
           try (OutputStream outputStream = Files.newOutputStream(path)) {
             properties.store(outputStream, "Edit by CloudNet");
@@ -160,7 +168,9 @@ public abstract class DefaultMinecraftCloudService extends DefaultTemplateCloudS
 
           this.rewriteServiceConfigurationFile(path, line -> {
             if (line.startsWith("  ip: ")) {
-              line = "  ip: " + CloudNet.getInstance().getConfig().getHostAddress();
+              String address = CloudNet.getInstance()
+                .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
+              line = "  ip: " + address;
             }
 
             if (line.startsWith("  port: ")) {
@@ -180,7 +190,9 @@ public abstract class DefaultMinecraftCloudService extends DefaultTemplateCloudS
 
           this.rewriteServiceConfigurationFile(path, line -> {
             if (line.startsWith("    ip: ")) {
-              line = "    ip: '" + CloudNet.getInstance().getConfig().getHostAddress() + "'";
+              String address = CloudNet.getInstance()
+                .getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null));
+              line = "    ip: '" + address + "'";
             }
 
             if (line.startsWith("    port: ")) {

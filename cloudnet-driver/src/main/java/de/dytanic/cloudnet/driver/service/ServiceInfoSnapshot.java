@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 public class ServiceInfoSnapshot extends SerializableJsonDocPropertyable implements INameable,
-  Comparable<ServiceInfoSnapshot>, SerializableObject {
+    Comparable<ServiceInfoSnapshot>, SerializableObject {
 
   public static final Type TYPE = new TypeToken<ServiceInfoSnapshot>() {
   }.getType();
@@ -57,18 +57,18 @@ public class ServiceInfoSnapshot extends SerializableJsonDocPropertyable impleme
   protected ServiceConfiguration configuration;
 
   public ServiceInfoSnapshot(long creationTime, HostAndPort address, long connectedTime, ServiceLifeCycle lifeCycle,
-    ProcessSnapshot processSnapshot, ServiceConfiguration configuration) {
+      ProcessSnapshot processSnapshot, ServiceConfiguration configuration) {
     this(creationTime, address, connectedTime, lifeCycle, processSnapshot, JsonDocument.newDocument(), configuration);
   }
 
   public ServiceInfoSnapshot(long creationTime, HostAndPort address, long connectedTime, ServiceLifeCycle lifeCycle,
-    ProcessSnapshot processSnapshot, JsonDocument properties, ServiceConfiguration configuration) {
+      ProcessSnapshot processSnapshot, JsonDocument properties, ServiceConfiguration configuration) {
     this(creationTime, address, address, connectedTime, lifeCycle, processSnapshot, properties, configuration);
   }
 
   public ServiceInfoSnapshot(long creationTime, HostAndPort address, HostAndPort connectAddress, long connectedTime,
-    ServiceLifeCycle lifeCycle, ProcessSnapshot processSnapshot, JsonDocument properties,
-    ServiceConfiguration configuration) {
+      ServiceLifeCycle lifeCycle, ProcessSnapshot processSnapshot, JsonDocument properties,
+      ServiceConfiguration configuration) {
     this.creationTime = creationTime;
     this.address = address;
     this.connectAddress = connectAddress;
@@ -149,12 +149,17 @@ public class ServiceInfoSnapshot extends SerializableJsonDocPropertyable impleme
     return this.getServiceId().getName();
   }
 
+  @NotNull
+  public Optional<ServiceTask> getTask() {
+    return this.getServiceId().getTask();
+  }
+
   @Override
   public int compareTo(@NotNull ServiceInfoSnapshot serviceInfoSnapshot) {
     return ComparisonChain.start()
-      .compare(this.getServiceId().getTaskName(), serviceInfoSnapshot.getServiceId().getTaskName())
-      .compare(this.getServiceId().getTaskServiceId(), serviceInfoSnapshot.getServiceId().getTaskServiceId())
-      .result();
+        .compare(this.getServiceId().getTaskName(), serviceInfoSnapshot.getServiceId().getTaskName())
+        .compare(this.getServiceId().getTaskServiceId(), serviceInfoSnapshot.getServiceId().getTaskServiceId())
+        .result();
   }
 
   @Override

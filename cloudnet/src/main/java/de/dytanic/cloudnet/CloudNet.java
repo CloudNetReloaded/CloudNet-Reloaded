@@ -1076,6 +1076,15 @@ public final class CloudNet extends CloudNetDriver {
     return this.config;
   }
 
+  @NotNull
+  public String getTaskHostAddress(@Nullable ServiceTask task) {
+    if (task != null && task.getAddress() != null) {
+      return task.getAddress();
+    }
+
+    return this.config.getHostAddress();
+  }
+
   public IConfigurationRegistry getConfigurationRegistry() {
     return this.configurationRegistry;
   }

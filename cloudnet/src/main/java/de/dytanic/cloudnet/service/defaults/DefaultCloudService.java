@@ -176,7 +176,9 @@ public abstract class DefaultCloudService extends DefaultEmptyCloudService {
     }
     return new ServiceInfoSnapshot(
       this.serviceInfoSnapshot == null ? System.currentTimeMillis() : this.serviceInfoSnapshot.getCreationTime(),
-      new HostAndPort(CloudNet.getInstance().getConfig().getHostAddress(), this.serviceConfiguration.getPort()),
+      new HostAndPort(
+        CloudNet.getInstance().getTaskHostAddress(this.serviceConfiguration.getServiceId().getTask().orElse(null)),
+        this.serviceConfiguration.getPort()),
       new HostAndPort(CloudNet.getInstance().getConfig().getConnectHostAddress(), this.serviceConfiguration.getPort()),
       this.serviceInfoSnapshot == null ? -1 : this.serviceInfoSnapshot.getConnectedTime(),
       lifeCycle,
