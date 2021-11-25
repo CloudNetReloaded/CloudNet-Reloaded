@@ -26,8 +26,10 @@ import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.driver.service.ServiceLifeCycle;
 import de.dytanic.cloudnet.driver.service.ServiceTask;
 import de.dytanic.cloudnet.event.instance.CloudNetTickEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -75,9 +77,13 @@ public class CloudNetTick {
         }
 
         lastTick = System.currentTimeMillis();
-        while (!this.processQueue.isEmpty()) {
-          ITask<?> task = this.processQueue.poll();
-          if (task != null) {
+
+        if (!this.processQueue.isEmpty()) {
+          // Create a copy to prevent infinity loops if a task registers a new task
+          List<ITask<?>> tasks = new ArrayList<>(this.processQueue);
+          this.processQueue.clear();
+
+          for (ITask<?> task : tasks) {
             task.call();
           }
         }
@@ -108,7 +114,7 @@ public class CloudNetTick {
         if (serviceTask.getMinServiceCount() > runningServicesCount) {
           // checking if there is a prepared service that can be started instead of creating a new service
           if (this.startPreparedService(taskServices)) {
-            return;
+            continue;
           }
           // start a new service if no service is available
           NodeServer nodeServer = this.cloudNet.searchLogicNodeServer(serviceTask);
