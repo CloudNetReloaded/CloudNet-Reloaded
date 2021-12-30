@@ -101,6 +101,8 @@ public class CloudNetTick {
     }
   }
 
+  private boolean starting = false;
+
   private void startService() {
     for (ServiceTask serviceTask : this.cloudNet.getServiceTaskProvider().getPermanentServiceTasks()) {
       if (serviceTask.canStartServices()) {
@@ -118,11 +120,15 @@ public class CloudNetTick {
           }
           // start a new service if no service is available
           NodeServer nodeServer = this.cloudNet.searchLogicNodeServer(serviceTask);
-          if (nodeServer != null) {
+          if (nodeServer != null && !this.starting) {
+            this.starting = true;
             // found the best node server to start the service on
             nodeServer.getCloudServiceFactory()
               .createCloudServiceAsync(ServiceConfiguration.builder(serviceTask).build())
-              .onComplete(snapshot -> this.startPreparedService(nodeServer, snapshot));
+              .onComplete(snapshot -> {
+                this.startPreparedService(nodeServer, snapshot);
+                this.starting = false;
+              }).onCancelled(task -> this.starting = false).onFailure(throwable -> this.starting = false);
           }
         }
       }

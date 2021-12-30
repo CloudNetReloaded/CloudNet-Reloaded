@@ -79,10 +79,12 @@ public final class NodeCustomChannelMessageListener {
   private ProtocolBuffer processLoginRequest(NodeLocalBridgePlayerProxyLoginRequestEvent requestEvent) {
     CloudNetDriver.getInstance().getEventManager().callEvent(requestEvent);
 
+    /*
     if (this.nodePlayerManager.getOnlinePlayer(requestEvent.getConnectionInfo().getUniqueId()) != null) {
       requestEvent.setCancelled(true);
       requestEvent.setKickReason(this.bridgeConfiguration.getMessages().get("already-connected"));
     }
+    */
 
     if (requestEvent.isCancelled()) {
       if (requestEvent.getKickReason() == null) {
